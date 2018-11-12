@@ -1,4 +1,5 @@
 import myaxios from "@util/axios";
+import api from "@/api"
  const actions = {
     async getheaddata({commit,state}){
         var res =await myaxios({
@@ -15,17 +16,54 @@ import myaxios from "@util/axios";
         })
     },
     async getbodydata({commit,state}){
-        console.log(state,"-------------------")
         let page = state.bodydata.page;
         let id = state.bodydata.id;
-        var res =await myaxios({
-            path : `container/getIndex?containerid=${id}&openApp=0&page=`+page,
-        })
+        if(id==102803){
+            var res =await myaxios({
+                path : `container/getIndex?containerid=${id}&openApp=0&page=`+page,
+            })
+        }else{
+            var res =await myaxios({
+                path : `container/getIndex?containerid=${id}&openApp=0&since_id=`+page,
+            })
+        }
         commit({
             type : "GET_BODY_DATA_MUTATION",
             payload : res
         })
-        console.log(res,5555)
+    },
+    async changebodydata({commit,state},payload){
+        state.bodydata.page = 1;
+        state.bodydata.data = [];
+        state.bodydata.id = payload.payload.id;
+        let page = state.bodydata.page;
+        let id = state.bodydata.id;
+        if(id==102803){
+            var res =await myaxios({
+                path : `container/getIndex?containerid=${id}&openApp=0&page=`+page,
+            })
+        }else{
+            var res =await myaxios({
+                path : `container/getIndex?containerid=${id}&openApp=0&since_id=`+page,
+            })
+        }
+        commit({
+            type : "GET_BODY_DATA_MUTATION",
+            payload : res
+        })
+    },
+    getgirl({state,commit}){
+        commit({
+            type : "GET_GIRL_DATA_MUTATION",
+            payload : api
+        })
+    },
+    getmygirl({state,commit}){
+        var data = localStorage.getItem("girl")
+        commit({
+            type :"GET_MYGIRL_DATA_MUTATION",
+            payload : data
+        })
     }
 
 }

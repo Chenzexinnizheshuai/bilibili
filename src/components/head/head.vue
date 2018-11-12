@@ -20,9 +20,9 @@
             </div>
             <div class="swiper-container swiper-container-horizontal swiper-container-free-mode">
                 <ul class="swiper-wrapper">
-                    <li class="swiper-slide" v-for="item in navlist" :key="item.gid" :route="item.gid">
+                    <li class="swiper-slide" @click="changebody(item.gid)" v-for="item in navlist" :key="item.gid" :route="item.gid">
                         <span>{{item.name}}</span>
-                        <div class="em"></div>
+                        <div v-if="id==item.gid" class="em"></div>
                     </li>
                 </ul>
             </div>
@@ -43,8 +43,7 @@ export default {
                 title : "",
                 href : ""
             },
-            lalala : store.title
-            
+            id : ''
         }
     },
     components : {
@@ -63,7 +62,7 @@ export default {
                 freeModeMomentum : false,
                 freeModeMomentumBounce : false,
                 resistanceRatio : 0,
-                 slidesPerView : 6,
+                slidesPerView : 6,
             })
         })
     },
@@ -72,6 +71,17 @@ export default {
             await store.dispatch("getheaddata")
             var homemodule =  store.state.homemodule;
             this.navlist = homemodule.navlist;
+            this.id = homemodule.bodydata.id;
+        },
+        changebody(id){
+            store.dispatch({
+                type : "changebodydata",
+                payload : {
+                    id : id,
+                }
+            }); 
+            var homemodule =  store.state.homemodule;
+            this.id = homemodule.bodydata.id;
         }
     }
 };

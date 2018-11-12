@@ -1,8 +1,9 @@
 <template>
+<div>
 <div class="bbooxx" ref="wrapper">
 
     <div class="itembox" >
-        <div v-if="item.mblog" class="wb-item-wrap" v-for="item in data" :key="item.itemid">
+        <div v-if="item.mblog"  class="wb-item-wrap" v-for="(item,index) in alldata" :key='item.itemid+index'>
             <!-- {{item}} -->
             <div class="card-wrap">
                 <div class="usericon">
@@ -13,7 +14,7 @@
                     <p class="username"><span>{{item.mblog.user.screen_name}}</span><i class="vip"></i></p>
                     <p class="time-box"><span class="time">{{item.mblog.created_at}}</span>&nbsp;<span class="from">{{item.mblog.source}}</span></p>
                 </div>
-                <div class="button">
+                <div class="button" @click="detail">
                     <div class="button-box">
                         <i class="fa fa-meh-o"></i>&nbsp;
                         <span>关注</span>
@@ -40,29 +41,35 @@
         </div>
     </div>
 </div>
-
+</div>
 </template>
 <script>
 import { Indicator } from 'mint-ui';
 import { Lazyload } from 'mint-ui';
+import { mapState } from 'vuex';
 import store from "@/store";
+import router from "@/router";
 // import { } from 'mint-ui';
 export default {
+    components :{
+
+    },
     data(){
         return {
             data : [],
             page : 1
         }
     },
+    computed : {
+        ...mapState({
+            alldata : state => state.homemodule.bodydata.data
+        })
+    },
     async created() {
-        // store.dispatch("getbodydata")
-        console.log(store.dispatch)
-        console.log("alalalsadasd")
-        // this.data =await this.getdata();
-        await store.dispatch("getbodydata");
-        this.data = store.state.homemodule.bodydata.data;
+        store.dispatch("getbodydata");
         this.$nextTick(()=>{
             let bs = new this.BScroll(this.$refs.wrapper,{
+                click : true,
                 pullUpLoad: { //配置上拉加载
                     threshold: 50 // 距离底部多少距离
                 }
@@ -72,11 +79,8 @@ export default {
                     // text: '加载中...',
                     spinnerType: 'triple-bounce',
                 });
-                // this.page++;
-                // var data = await this.getdata()
-                // this.data = this.data.concat(data)
                 await store.dispatch("getbodydata");
-                this.data = store.state.homemodule.bodydata.data;
+                // this.data = store.state.homemodule.bodydata.data;
                 bs.finishPullUp()
                 bs.refresh()
                 Indicator.close();
@@ -92,13 +96,17 @@ export default {
                 path :"container/getIndex?containerid=102803&openApp=0&page="+this.page
             })
             return res.data.data.cards;
+        },
+        detail(){
+            console.log(666);
+            router.push({name : "detail"})
         }
     }
 }
 </script>
 <style lang="scss">
 .bbooxx{
-    height: 1.12rem;
+    height: 17.786667rem;
     margin-top: 2.2rem;
 }
 .itembox{
